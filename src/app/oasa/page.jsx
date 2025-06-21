@@ -1,46 +1,45 @@
 'use client';
 
 import axios from "axios";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 
 import Map from "./Map";
+import Overlay from "./Overlay";
 
 const Test = () => {
   const mapContainerRef = useRef();
-  const [data, setData] = useState(null);
+  const [allLineData, setAllLineData] = useState(null);
+  const [selectedLineCode, setSelectedLinecode] = useState('');
+  const [selectedRouteCode, setSelectedRouteCode] = useState('');
+  const [routeDetailsXY, setRouteDetailsXY] = useState(null);
+  const [busLocations, setBusLocations] = useState(null);
 
-  const getStops = async () => {
-
-    let resp = await axios.get(`/api/oasa`, {
+  // first step: get all line data (linecodes, lineIDs, lineDescriptions)
+  const getAllLines = async () => {
+    const resp = await axios.get(`/api/oasa`, {
       params: {
-        act: 'webGetLinesWithMLInfo',
-        // p1: '962'
+        act: 'webGetLines'
       }
     });
 
-    if (resp) setData(resp.data);
-
+    if (resp) {
+      setAllLineData(resp.data);
+    }
     console.log('resp=', resp);
   };
 
   useEffect(() => {
-    getStops();
+    getAllLines();
   }, []);
 
-  if (!data) return;
+  if (!allLineData) return;
 
   return (
     <>
-      {/* {data.map((item) => {
-        return (
-          <div key={item?.StopID}>
-            {item?.StopID}
-          </div>
-        )
-      })} */}
-      <Map mapRef={mapContainerRef} />
+      <Map mapRef={mapContainerRef} routeDetailsXY={routeDetailsXY} setRouteDetailsXY={setRouteDetailsXY} busLocations={busLocations} />
+      <Overlay allLineData={allLineData} selectedLineCode={selectedLineCode} setSelectedLineCode={setSelectedLinecode} selectedRouteCode={selectedRouteCode} setSelectedRouteCode={setSelectedRouteCode} setRouteDetailsXY={setRouteDetailsXY} setBusLocations={setBusLocations} />
     </>
   )
 }
 
-export default Test;
+export default memo(Test);

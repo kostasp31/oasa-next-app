@@ -1,3 +1,6 @@
+'use client';
+import { memo } from "react";
+
 const Layout = ({children}) => {
   return (
     <div style={{width: '100%', display:'flex', justifyContent:'center'}}>
@@ -6,4 +9,4 @@ const Layout = ({children}) => {
   )
 }
 
-export default Layout;
+export default memo(Layout);
