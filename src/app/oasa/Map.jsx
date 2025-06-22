@@ -18,6 +18,7 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/standard?optimize=true',
       center: [23.7266308248318, 37.977487240739535],
       zoom: 11
     });
@@ -25,6 +26,83 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
     mapRef.current.on('click', (e) => {
       console.log(e)
     });
+
+    mapRef.current.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}), 'top-right');
+    mapRef.current.addControl(new mapboxgl.ScaleControl({
+      maxWidth: 100,
+      unit: 'imperial'
+    }), 'bottom-right');
+    mapRef.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+    class HomeControl {
+      onAdd(map) {
+        this._map = map;
+        this._container = document.createElement('div');
+        this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group custom-map-control';
+        this._container.style.cursor = 'pointer';
+
+        const button = document.createElement('button');
+        button.title = 'Original map view';
+
+        button.onclick = () => {
+          mapRef.current.flyTo({
+            center: [23.7266308248318, 37.977487240739535],
+            zoom: 11
+          });
+        };
+        
+        const image = document.createElement('img');
+        image.src = 'icons/home.svg';
+        image.style.fontWeight = 900;
+        image.style.color = '#404040',
+        image.style.fontSize = '20px';
+        image.style.marginTop = '3px';
+        button.appendChild(image);
+
+        this._container.appendChild(button);
+        return this._container;
+      }
+
+      onRemove() {
+        this._container.parentNode.removeChild(this._container);
+        this._map = undefined;
+      }
+    }
+    mapRef.current.addControl(new HomeControl(), 'bottom-right');
+
+    class FocusToRouteControl {
+      onAdd(map) {
+        this._map = map;
+        this._container = document.createElement('div');
+        this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group custom-map-control';
+        this._container.style.cursor = 'pointer';
+
+        const button = document.createElement('button');
+        button.title = 'Focus to route';
+
+        button.onclick = () => {};
+        
+        const image = document.createElement('img');
+        image.src = 'icons/route.svg';
+        image.style.fontWeight = 900;
+        image.style.color = '#404040',
+        image.style.fontSize = '20px';
+        image.style.marginTop = '3px';
+        button.appendChild(image);
+
+        this._container.appendChild(button);
+        return this._container;
+      }
+
+      onRemove() {
+        this._container.parentNode.removeChild(this._container);
+        this._map = undefined;
+      }
+    }
+    mapRef.current.addControl(new FocusToRouteControl(), 'bottom-right');
+
+
+    // TODO: add control to change style: https://docs.mapbox.com/api/maps/styles/
 
     //TODO: check why map loads 2 times?
     mapRef.current.on('load', () => {
