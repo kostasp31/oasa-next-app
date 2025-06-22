@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, memo } from "react";
 
 import Map from "./Map";
 import Overlay from "./Overlay";
+import { Toaster } from 'react-hot-toast';
 
 const Test = () => {
   const mapContainerRef = useRef();
@@ -38,6 +39,7 @@ const Test = () => {
     <>
       <Map mapRef={mapContainerRef} routeDetailsXY={routeDetailsXY} setRouteDetailsXY={setRouteDetailsXY} busLocations={busLocations} />
       <Overlay allLineData={allLineData} selectedLineCode={selectedLineCode} setSelectedLineCode={setSelectedLinecode} selectedRouteCode={selectedRouteCode} setSelectedRouteCode={setSelectedRouteCode} setRouteDetailsXY={setRouteDetailsXY} setBusLocations={setBusLocations} />
+      <Toaster />
     </>
   )
 }

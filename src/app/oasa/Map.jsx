@@ -4,7 +4,10 @@ import { useEffect, useRef, useState, memo } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
+import toast from 'react-hot-toast';
 
+// TODO: add map controls (and home button)
+// TODO: add nitifications 
 const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
   const mapContainerRef = useRef();
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -15,20 +18,51 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      center: [23.7266308248318, 37.977487240739535], // starting position [lng, lat]
-      zoom: 11 // starting zoom
+      center: [23.7266308248318, 37.977487240739535],
+      zoom: 11
     });
 
     mapRef.current.on('click', (e) => {
       console.log(e)
     });
 
+    //TODO: check why map loads 2 times?
     mapRef.current.on('load', () => {
-      mapRef.current.loadImage('icons/bus(1).png', function(error, image) {
-        if (error) throw error;
-          mapRef.current.addImage('bus-marker-image', image);
-        });
-      setMapLoaded(true);
+      if (!mapLoaded) {
+        mapRef.current.loadImage('icons/bus(1).png', function(error, image) {
+          if (error) throw error;
+            mapRef.current.addImage('bus-marker-image', image);
+          });
+        setMapLoaded(true);
+        
+        // toast('Hello World', {
+        //   duration: 4000,
+        //   position: 'top-center',
+
+        //   // Styling
+        //   style: {},
+        //   className: '',
+
+        //   // Custom Icon
+        //   icon: '👏',
+
+        //   // Change colors of success/error/loading icon
+        //   iconTheme: {
+        //     primary: '#000',
+        //     secondary: '#fff',
+        //   },
+
+        //   // Aria
+        //   ariaProps: {
+        //     role: 'status',
+        //     'aria-live': 'polite',
+        //   },
+
+        //   // Additional Configuration
+        //   removeDelay: 1000,
+        // });
+
+      }
     });
 
   }, []);
@@ -72,6 +106,8 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
 
   // draw points of the bus locations in the map
   useEffect(() => {
+    if (!!mapLoaded && mapRef.current.getLayer('locations')) mapRef.current.removeLayer('locations');
+    if (!!mapLoaded && mapRef.current.getSource('locations')) mapRef.current.removeSource('locations');
     if (busLocations && !!mapLoaded) {
       const geojson = {
         "type": "FeatureCollection",
@@ -91,10 +127,6 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
         })
       })
 
-      console.log(geojson)
-
-      if (mapRef.current.getLayer('locations')) mapRef.current.removeLayer('locations');
-      if (mapRef.current.getSource('locations')) mapRef.current.removeSource('locations');
       mapRef.current.addSource('locations', {
         'type': 'geojson',
         'generateID': true,
@@ -111,8 +143,6 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
           'symbol-z-elevate': true
         }
       });
-
-      console.log(mapRef.current.getLayer('locations'))
     }
 
   }, [busLocations, mapLoaded])
