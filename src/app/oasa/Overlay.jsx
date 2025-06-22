@@ -1,11 +1,24 @@
 'use client';
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 const Overlay = ({ allLineData, selectedLineCode, setSelectedLineCode, selectedRouteCode, setSelectedRouteCode, setRouteDetailsXY, setBusLocations }) => {
   const [routeData, setRouteData] = useState(null);
   const [loadingRoutes, setLoadingRoutes] = useState(false);
+
+  // if there is noly one royte, automatically select it
+  useEffect(() => {
+    if (routeData && routeData?.length === 1) {
+      setSelectedRouteCode(routeData[0].route_code);
+      getRouteXY(routeData[0].route_code);
+      getRouteBusLocations(routeData[0].route_code);
+      toast.success(`Auto selected the only route`, {
+        duration: 4000,
+        position: 'top-center'
+      });
+    }
+  }, [routeData])
 
   const getRoutesForLine = async (line) => {
     const resp = await axios.get(`/api/oasa`, {

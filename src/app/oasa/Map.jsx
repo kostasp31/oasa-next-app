@@ -14,7 +14,7 @@ const Map = ({ mapRef, routeDetailsXY, busLocations }) => {
 
   // mapbox initialization
   useEffect(() => {
-    mapboxgl.accessToken = 'pk.eyJ1Ijoia29zdGFzcDMxIiwiYSI6ImNtYjd5YTJkYzBpam4yanA5ZnVzNmw2bmYifQ.72jFxlDSolcv-n9GRPAKQg'
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
