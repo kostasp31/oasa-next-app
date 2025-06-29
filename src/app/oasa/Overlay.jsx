@@ -3,7 +3,7 @@ import { memo, useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const Overlay = ({ allLineData, selectedLineCode, setSelectedLineCode, selectedRouteCode, setSelectedRouteCode, setRouteDetailsXY, setBusLocations }) => {
+const Overlay = ({ allLineData, selectedLineCode, setSelectedLineCode, selectedRouteCode, setSelectedRouteCode, setRouteDetailsXY, setBusLocations, layersOpen, setLayersOpen }) => {
   const [routeData, setRouteData] = useState(null);
   const [loadingRoutes, setLoadingRoutes] = useState(false);
 
